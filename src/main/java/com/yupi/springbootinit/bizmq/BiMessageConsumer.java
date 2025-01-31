@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.exception.BusinessException;
 import com.yupi.springbootinit.manager.AIManager;
+import com.yupi.springbootinit.manager.DouBaoManager;
 import com.yupi.springbootinit.model.entity.Chart;
 import com.yupi.springbootinit.service.ChartService;
 import lombok.SneakyThrows;
@@ -28,6 +29,9 @@ public class BiMessageConsumer {
     private ChartService chartService;
     @Resource
     private AIManager aiManager;
+    @Resource
+    private DouBaoManager douBaoManager;
+
 
     /**
      * 接收消息的方法
@@ -38,7 +42,7 @@ public class BiMessageConsumer {
      */
     // 使用@SneakyThrows注解简化异常处理
     @SneakyThrows
-    // 使用@RabbitListener注解指定要监听的队列名称为"code_queue"，并设置消息的确认机制为手动确认
+    // 使用@RabbitListener注解指定要监听的队列名称为，并设置消息的确认机制为手动确认
     @RabbitListener(queues = {BiMqConstant.BI_QUEUE_NAME}, ackMode = "MANUAL")
     // @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag是一个方法参数注解,用于从消息头中获取投递标签(deliveryTag),
     // 在RabbitMQ中,每条消息都会被分配一个唯一的投递标签，用于标识该消息在通道中的投递状态和顺序。通过使用@Header(AmqpHeaders.DELIVERY_TAG)注解,可以从消息头中提取出该投递标签,并将其赋值给long deliveryTag参数。
@@ -63,10 +67,11 @@ public class BiMessageConsumer {
             handleChartUpdateError(chart.getId(), "更新图表执行状态失败");
             return;
         }
-        // 调用 AI
-        String result = aiManager.sendMsgToXingHuo(true, buildUserInput(chart));
+        // 调用
+        String result = douBaoManager.performStandardChatCompletion(buildUserInput(chart));
+        //String result = aiManager.sendMsgToXingHuo(true, buildUserInput(chart));
         // 对返回结果做拆分,按照5个中括号进行拆分
-        String[] splits = result.split("'【【【【【'");
+        String[] splits = result.split("【【【【【");
         // 拆分之后还要进行校验
         if (splits.length < 3) {
             handleChartUpdateError(chart.getId(), "AI 生成错误");
@@ -85,6 +90,8 @@ public class BiMessageConsumer {
         boolean updateResult = chartService.updateById(updateChartResult);
         if (!updateResult) {
             handleChartUpdateError(chart.getId(), "更新图表成功状态失败");
+            // 确认消息的接收，即使更新图表状态失败
+            channel.basicAck(deliveryTag, false);
         }
 
 
@@ -104,6 +111,7 @@ public class BiMessageConsumer {
         if (!updateResult) {
             log.error("更新图表失败状态失败" + chartId + "," + execMessage);
         }
+
     }
 
     /**

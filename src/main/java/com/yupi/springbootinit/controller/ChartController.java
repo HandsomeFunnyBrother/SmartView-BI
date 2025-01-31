@@ -17,6 +17,7 @@ import com.yupi.springbootinit.constant.UserConstant;
 import com.yupi.springbootinit.exception.BusinessException;
 import com.yupi.springbootinit.exception.ThrowUtils;
 import com.yupi.springbootinit.manager.AIManager;
+import com.yupi.springbootinit.manager.DouBaoManager;
 import com.yupi.springbootinit.manager.RedisLimiterManager;
 import com.yupi.springbootinit.model.dto.chart.*;
 import com.yupi.springbootinit.model.entity.Chart;
@@ -63,6 +64,9 @@ public class ChartController {
     private ThreadPoolExecutor threadPoolExecutor;
     @Resource
     private BiMessageProducer biMessageProducer;
+    //新增豆包
+    @Resource
+    private DouBaoManager douBaoManager;
 
     // region 增删改查
 
@@ -315,9 +319,11 @@ public class ChartController {
         userInput.append(csvData).append("\n");
 
         // 拿到返回结果
-        String result = aiManager.sendMsgToXingHuo(true, userInput.toString());
+        String result = douBaoManager.performStandardChatCompletion(userInput.toString());
+        //String result = aiManager.sendMsgToXingHuo(true, userInput.toString());
+
         // 对返回结果做拆分,按照5个中括号进行拆分
-        String[] splits = result.split("'【【【【【'");
+        String[] splits = result.split("【【【【【");
         // 拆分之后还要进行校验
         if (splits.length < 3) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 生成错误");
@@ -448,9 +454,10 @@ public class ChartController {
                 return;
             }
             // 调用 AI
-            String result = aiManager.sendMsgToXingHuo(true, userInput.toString());
+            String result = douBaoManager.performStandardChatCompletion(userInput.toString());
+            //String result = aiManager.sendMsgToXingHuo(true, userInput.toString());
             // 对返回结果做拆分,按照5个中括号进行拆分
-            String[] splits = result.split("'【【【【【'");
+            String[] splits = result.split("【【【【【");
             // 拆分之后还要进行校验
             if (splits.length < 3) {
                 handleChartUpdateError(chart.getId(),"AI 生成错误");

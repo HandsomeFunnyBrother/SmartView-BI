@@ -56,8 +56,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
 
@@ -170,6 +168,13 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //获取当前登录用户的信息
+        User userLogin = userService.getLoginUser(request);
+        //获取请求删除的id
+        Long deleteRequestId = deleteRequest.getId();
+        if(deleteRequestId.equals(userLogin.getId())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能删除自己");
         }
         boolean b = userService.removeById(deleteRequest.getId());
         return ResultUtils.success(b);

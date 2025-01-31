@@ -1,8 +1,7 @@
 package com.yupi.springbootinit.service.impl;
 
-import static com.yupi.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.springbootinit.common.ErrorCode;
@@ -26,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import static com.yupi.springbootinit.constant.UserConstant.*;
 
 /**
  * 用户服务实现
@@ -72,6 +73,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            //保存系统默认头像和昵称
+            //todo 打包上传，没测试过
+            user.setUserAvatar(IMAGE_UPLOAD_DIR);
+            user.setUserName(USER_NICK_NAME_PREFIX+ RandomUtil.randomString(10));
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

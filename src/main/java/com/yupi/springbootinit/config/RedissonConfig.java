@@ -15,6 +15,7 @@ public class RedissonConfig {
     private Integer database;
     private String host;
     private Integer port;
+    private String password;
 
     /**
      * 创建RedissonClient对象
@@ -28,6 +29,7 @@ public class RedissonConfig {
         //设置配置
         config.useSingleServer()
                 .setDatabase(database)
+                .setPassword(password)
                 .setAddress("redis://" + host + ":" + port);
 
         //创建Redisson实例

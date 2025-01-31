@@ -1,6 +1,5 @@
 package com.yupi.springbootinit.bizmq;
 
-import cn.hutool.core.map.BiMap;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -14,7 +13,9 @@ public class BiInitMain {
         try {
             // 创建连接工厂
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost("43.138.83.42");
+            factory.setUsername("funny");
+            factory.setPassword("zxk545454");
             // 创建连接
             Connection connection = factory.newConnection();
             // 创建通道

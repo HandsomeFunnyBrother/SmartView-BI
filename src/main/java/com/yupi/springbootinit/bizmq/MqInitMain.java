@@ -13,7 +13,9 @@ public class MqInitMain {
         try {
             // 创建连接工厂
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost("43.138.83.42");
+            factory.setUsername("funny");
+            factory.setPassword("zxk545454");
             // 创建连接
             Connection connection = factory.newConnection();
             // 创建通道
