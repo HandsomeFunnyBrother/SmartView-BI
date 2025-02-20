@@ -74,7 +74,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
             //保存系统默认头像和昵称
-            //todo 打包上传，没测试过
             user.setUserAvatar(IMAGE_UPLOAD_DIR);
             user.setUserName(USER_NICK_NAME_PREFIX+ RandomUtil.randomString(10));
             boolean saveResult = this.save(user);
