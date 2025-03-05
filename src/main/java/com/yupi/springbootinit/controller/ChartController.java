@@ -1,5 +1,6 @@
 package com.yupi.springbootinit.controller;
 
+import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -289,11 +290,12 @@ public class ChartController {
          * 校验文件后缀
          * 利用FileUtil工具类中的getSuffix获取文件后缀
          */
-        String suffix = FileUtil.getSuffix(originalFilename);
+        //hutool工具 校验文件后缀合法
+        String realType = FileTypeUtil.getType(originalFilename);
         //定义合法后缀列表
         final List<String> validFinalSuffixList = Arrays.asList("xls", "xlsx", "csv");
         // 如果文件后缀不在合法后缀列表中，就抛出异常，并给出提示
-        ThrowUtils.throwIf(!validFinalSuffixList.contains(suffix), ErrorCode.PARAMS_ERROR, "文件格式错误");
+        ThrowUtils.throwIf(!validFinalSuffixList.contains(realType), ErrorCode.PARAMS_ERROR, "文件格式错误");
 
         // 通过response对象拿到用户id(必须登录才能使用)
         User loginUser = userService.getLoginUser(request);
@@ -398,11 +400,12 @@ public class ChartController {
           校验文件后缀
           利用FileUtil工具类中的getSuffix获取文件后缀
          */
-        String suffix = FileUtil.getSuffix(originalFilename);
+        //hutool工具 校验文件后缀合法
+        String realType = FileTypeUtil.getType(originalFilename);
         //定义合法后缀列表
         final List<String> validFinalSuffixList = Arrays.asList("xls", "xlsx", "csv");
         // 如果文件后缀不在合法后缀列表中，就抛出异常，并给出提示
-        ThrowUtils.throwIf(!validFinalSuffixList.contains(suffix), ErrorCode.PARAMS_ERROR, "文件格式错误");
+        ThrowUtils.throwIf(!validFinalSuffixList.contains(realType), ErrorCode.PARAMS_ERROR, "文件格式错误");
 
         // 通过response对象拿到用户id(必须登录才能使用)
         User loginUser = userService.getLoginUser(request);
@@ -530,11 +533,12 @@ public class ChartController {
           校验文件后缀
           利用FileUtil工具类中的getSuffix获取文件后缀
          */
-        String suffix = FileUtil.getSuffix(originalFilename);
+        //hutool工具 校验文件后缀合法
+        String realType = FileTypeUtil.getType(originalFilename);
         //定义合法后缀列表
         final List<String> validFinalSuffixList = Arrays.asList("xls", "xlsx", "csv");
         // 如果文件后缀不在合法后缀列表中，就抛出异常，并给出提示
-        ThrowUtils.throwIf(!validFinalSuffixList.contains(suffix), ErrorCode.PARAMS_ERROR, "文件格式错误");
+        ThrowUtils.throwIf(!validFinalSuffixList.contains(realType), ErrorCode.PARAMS_ERROR, "文件格式错误");
 
         // 通过response对象拿到用户id(必须登录才能使用)
         User loginUser = userService.getLoginUser(request);
